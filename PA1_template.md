@@ -1,6 +1,5 @@
 ---
 title: "Introduction"
-output: html_document
 ---
 
 It is now possible to collect a large amount of data about personal movement using activity monitoring devices such as a Fitbit, Nike Fuelband, or Jawbone Up. These type of devices are part of the “quantified self” movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. But these data remain under-utilized both because the raw data are hard to obtain and there is a lack of statistical methods and software for processing and interpreting the data
@@ -23,6 +22,7 @@ pT <- aT[, date := date ][, list(sum = sum(steps)), by = "date"]
 ```{r}
 ggplot(pT, aes(x=date, y=sum)) + geom_bar(stat="identity") + theme_bw() + theme_minimal() + theme(axis.text.x = element_text(angle=90, hjust=1))
 ```
+![Plot1](figure/unnamed-chunk-2-1.png)
 
 
 ## Mean and Median number of steps taken each da
@@ -51,6 +51,7 @@ summary(sT$steps)
 ```{r plot}
 plot(sT$interval, sT$steps, type="l", xlab = "Time in 5 minutes", ylab = "Average of Steps",col = "red", lwd=2)
 ```
+![Plot1](figure/unnamed-chunk-4-1.png)
 
 
 
@@ -94,9 +95,10 @@ kT <- eT[, date := date ][, list(sum = sum(steps), mean = mean(steps), median = 
 library(latticeExtra)
 xyplot(mean ~ date, data = pT, type="l",col="red") + xyplot(mean ~ date, data = kT, type="l",col="blue") 
 ```
+![Plot1](figure/unnamed-chunk-7-1.png)
 
 
-## Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+### Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 ```{r}
 summary(eT$steps)
 nrow(mT)
@@ -139,3 +141,4 @@ library("plyr")
 ```{r}
 xyplot(steps ~ interval | factor(V5), data = plyr::join(wT, pT, type="full"), type = "l", layout=c(1,2))
 ```
+![Plot1](figure/unnamed-chunk-9-1.png)
