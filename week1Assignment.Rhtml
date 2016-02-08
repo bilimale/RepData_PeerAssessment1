@@ -1,13 +1,14 @@
----
-title: "Introduction"
-output: html_document
----
+<html>
 
-It is now possible to collect a large amount of data about personal movement using activity monitoring devices such as a Fitbit, Nike Fuelband, or Jawbone Up. These type of devices are part of the “quantified self” movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. But these data remain under-utilized both because the raw data are hard to obtain and there is a lack of statistical methods and software for processing and interpreting the data
+<head>
+<title>Title</title>
+</head>
 
+<body>
 
+<p><h2> Introduction </h2>It is now possible to collect a large amount of data about personal movement using activity monitoring devices such as a Fitbit, Nike Fuelband, or Jawbone Up. These type of devices are part of the “quantified self” movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. But these data remain under-utilized both because the raw data are hard to obtain and there is a lack of statistical methods and software for processing and interpreting the data.</p>
 
-```r
+<!--begin.rcode
 library(ggplot2)
 # https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip
 activity <- read.csv("activity.csv")
@@ -17,52 +18,29 @@ activityCases <- activity[complete.cases(activity),]
 # Data table and by date
 aT <- data.table(activityCases, key = "date")
 pT <- aT[, date := date ][, list(sum = sum(steps)), by = "date"]
-```
+end.rcode-->
 
 
 
 <p> 1. Histogram of the total number of steps taken each day</p>
-
-```r
+<!--begin.rcode fig.width=7, fig.height=6, echo=TRUE , fig.keep="all"
 ggplot(pT, aes(x=date, y=sum)) + geom_bar(stat="identity") + theme_bw() + theme_minimal() + theme(axis.text.x = element_text(angle=90, hjust=1))
-```
-
-![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png)
+end.rcode-->
 
 
 
 <p> Mean and Median number of steps taken each day</p>
-
-```r
+<!--begin.rcode, echo=TRUE
 summary(activityCases$steps)
-```
-
-```
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    0.00    0.00    0.00   37.38   12.00  806.00
-```
-
-```r
 pT <- aT[, date := date ][, list(sum = sum(steps), mean = mean(steps), median = (median(steps))), by = "date"]
 head(pT)
-```
-
-```
-##          date   sum     mean median
-## 1: 2012-10-02   126  0.43750      0
-## 2: 2012-10-03 11352 39.41667      0
-## 3: 2012-10-04 12116 42.06944      0
-## 4: 2012-10-05 13294 46.15972      0
-## 5: 2012-10-06 15420 53.54167      0
-## 6: 2012-10-07 11015 38.24653      0
-```
+end.rcode-->
 
 
 
 
 <p> Average Daily activity pattern </p>
-
-```r
+<!--begin.rcode, echo=TRUE
 activity$DataTime <- seq.POSIXt(as.POSIXct(activity$date[1]), length =nrow(activity) ,by = "5 min")
 
 #Sort the data for 5 minute interval
@@ -71,63 +49,26 @@ activity.x <- subset(activityCases, select = -interval)
 activity.s <- subset(activityCases, select = interval)
 sT <- aggregate(activity.x, activity.s, mean)
 summary(sT$steps)
-```
 
-```
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.000   2.486  34.110  37.380  52.830 206.200
-```
-
-
-```r
 #Plot
 plot(sT$interval, sT$steps, type="l", xlab = "Time in 5 minutes", ylab = "Average of Steps",col = "red", lwd=2)
-```
-
-![plot of chunk plot](figure/plot-1.png)
+end.rcode-->
 
 
 
 
 <p> Maximum steps for the 5 minute period</p>
-
-```r
+<!--begin.rcode, echo=TRUE
 sT[which(grepl(max(sT$steps),sT$steps)),c(1)]
-```
+end.rcode-->
 
-```
-## [1] 835
-```
-
-
-
-```r
-## Imputing Missing values
-
+<p> Imputing Missing values</p>
+<!--begin.rcode, echo=TRUE
 print("Total NA's which are missing values in dataset")
-```
-
-```
-## [1] "Total NA's which are missing values in dataset"
-```
-
-```r
 nrow(activity[!complete.cases(activity),])
-```
 
-```
-## [1] 2304
-```
-
-```r
 print("Fill in the missing values with mean calculated for the steps for the 5 minute interval")
-```
 
-```
-## [1] "Fill in the missing values with mean calculated for the steps for the 5 minute interval"
-```
-
-```r
 activityEdited <- activity
 for(i in 1:nrow(activityEdited)) {
   if(!complete.cases(activityEdited[i,])) {
@@ -137,13 +78,12 @@ for(i in 1:nrow(activityEdited)) {
     }
   }
 }
-```
+end.rcode-->
 
 
 
 <p> Histogram with imputed data </p>
-
-```r
+<!--begin.rcode, echo=TRUE
 #Without imputing data
 pT <- aT[, date := date ][, list(sum = sum(steps), mean = mean(steps), median = as.integer(median(steps)) ), by = "date"]
 
@@ -154,51 +94,20 @@ kT <- eT[, date := date ][, list(sum = sum(steps), mean = mean(steps), median = 
 #Plot the 2 data
 library(latticeExtra)
 xyplot(mean ~ date, data = pT, type="l",col="red") + xyplot(mean ~ date, data = kT, type="l",col="blue") 
-```
-
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png)
+end.rcode-->
 
 
 <p> Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps? </p>
-
-```r
+<!--begin.rcode,echo=TRUE
 summary(eT$steps)
-```
-
-```
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##    0.00    0.00    0.00   37.38   27.00  806.00
-```
-
-```r
 nrow(mT)
-```
-
-```
-## Error in nrow(mT): object 'mT' not found
-```
-
-```r
 summary(sT$steps)
-```
-
-```
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##   0.000   2.486  34.110  37.380  52.830 206.200
-```
-
-```r
 nrow(sT)
-```
-
-```
-## [1] 288
-```
+end.rcode-->
 
 
 <p> Difference between weekdays and weekdays activity pattern </p>
-
-```r
+<!--begin.rcode,echo=TRUE
 activityWeekdays <- activityEdited
 for(i in 1:nrow(activityWeekdays)) {
   if(weekdays(activityWeekdays[i,]$DataTime) %in% c("Saturday","Sunday")) {
@@ -209,19 +118,6 @@ for(i in 1:nrow(activityWeekdays)) {
   
 }
 head(activityWeekdays)
-```
-
-```
-##       steps       date interval            DataTime      V5
-## 1 1.7169811 2012-10-01        0 2012-10-01 00:00:00 Weekday
-## 2 0.3396226 2012-10-01        5 2012-10-01 00:05:00 Weekday
-## 3 0.1320755 2012-10-01       10 2012-10-01 00:10:00 Weekday
-## 4 0.1509434 2012-10-01       15 2012-10-01 00:15:00 Weekday
-## 5 0.0754717 2012-10-01       20 2012-10-01 00:20:00 Weekday
-## 6 2.0943396 2012-10-01       25 2012-10-01 00:25:00 Weekday
-```
-
-```r
 weekdaySet <- subset(activityWeekdays, V5 %in% "Weekday")
 weekdayEnd <- subset(activityWeekdays, V5 %in% "Weekend")
 
@@ -239,15 +135,8 @@ pT[1:nrow(pT),5] = "Weekend"
 
 #install.packages("dplyr")
 library("plyr")
-```
-
-
-```r
 xyplot(steps ~ interval | factor(V5), data = plyr::join(wT, pT, type="full"), type = "l", layout=c(1,2))
-```
+end.rcode-->
 
-```
-## Joining by: interval, steps, date, DataTime, V5
-```
-
-![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png)
+</body>
+</html>
